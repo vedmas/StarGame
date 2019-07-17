@@ -10,10 +10,10 @@ import ru.my.game.base.BaseScreen;
 
 public class MenuScreen extends BaseScreen {
 
-    private static final float SPEED_LEN = 0.5f;
+    private static final float SPEED_LEN = 0.005f;
 
-    private Texture img, img1;
-    private Vector2 touch;
+    private Texture ship, background;
+    private Vector2 click;
     private Vector2 speed;
     private Vector2 pos;
     private Vector2 buf;
@@ -21,9 +21,9 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        img1 = new Texture("Cosmos.jpg");
-        img = new Texture("NLO.jpg");
-        touch = new Vector2();
+        background = new Texture("Cosmos.jpg");
+        ship = new Texture("NLO.jpg");
+        click = new Vector2();
         speed = new Vector2();
         pos = new Vector2();
         buf = new Vector2();
@@ -32,34 +32,42 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
-        buf.set(touch);
+        //pos.add(speed);
+        buf.set(click);
         if(buf.sub(pos).len() > SPEED_LEN) {
             pos.add(speed);
         }
         else {
-            pos.set(touch);
+            pos.set(click);
         }
 
-        Gdx.gl.glClearColor(0f, 0f, 0.139f, 1);
+        Gdx.gl.glClearColor(0.26f, 0.5f, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(img1, 0, 0);
-        batch.draw(img, pos.x, pos.y);
+        batch.draw(background, -1f, -1f, 2f, 2f);
+        batch.draw(ship, pos.x, pos.y, 0.15f, 0.15f);
         batch.end();
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        img1.dispose();
-        img.dispose();
+        background.dispose();
+        ship.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        touch.set(screenX, Gdx.graphics.getHeight() - screenY);
-        System.out.println("touch X = " + touch.x + " touch Y = " + touch.y);
-        speed.set(touch.cpy().sub(pos)).setLength(SPEED_LEN);
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        click.set(touch);
+        speed.set(click.cpy().sub(pos)).setLength(SPEED_LEN);
         return false;
     }
+
+    //    @Override
+//    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+//        touch.set(screenX, Gdx.graphics.getHeight() - screenY);
+//        System.out.println("touch X = " + touch.x + " touch Y = " + touch.y);
+//        speed.set(touch.cpy().sub(pos)).setLength(SPEED_LEN);
+//        return false;
+//    }
 }
