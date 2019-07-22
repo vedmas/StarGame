@@ -8,7 +8,7 @@ import ru.my.game.math.Rect;
 
 public class Ship extends Sprite {
 
-    private static final float SPEED_LEN = 0.005f;
+    private static final float SPEED_LEN = 0.006f;
     private Vector2 click, speed, buf;
 
     public Ship(TextureAtlas atlas) {
@@ -38,7 +38,7 @@ public class Ship extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        click.set(touch);
+        click.set(touch.x, (pos.y));
         speed.set(click.cpy().sub(pos)).setLength(SPEED_LEN);
         return false;
     }
