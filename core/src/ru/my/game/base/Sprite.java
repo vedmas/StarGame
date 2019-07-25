@@ -1,11 +1,9 @@
 package ru.my.game.base;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
-import javax.swing.plaf.synth.Region;
-
 import ru.my.game.Utils.Regions;
 import ru.my.game.math.Rect;
 
@@ -16,6 +14,8 @@ public abstract class Sprite extends Rect {
     protected TextureRegion[] regions;
     protected int frame;
     private boolean desttroyed;
+
+
 
     public Sprite() {
 
