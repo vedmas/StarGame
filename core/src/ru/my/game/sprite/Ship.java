@@ -1,6 +1,8 @@
 package ru.my.game.sprite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -25,12 +27,14 @@ public class Ship extends Sprite {
     private int rightPointer = INVALID_POINTER;
     private float reloadInterval;
     private float reloadTimer;
+    private Sound bulletSound;
 
     public Ship(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletPool = bulletPool;
         reloadInterval = 2f;
+        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
 
     }
 
@@ -151,5 +155,8 @@ public class Ship extends Sprite {
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletV, 0.03f, worldBounds, 1);
+        bulletSound.play();
     }
+
+
 }

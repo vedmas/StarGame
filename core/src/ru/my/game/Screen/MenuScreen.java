@@ -2,6 +2,8 @@ package ru.my.game.Screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -27,6 +29,8 @@ public class MenuScreen extends BaseScreen {
     private ButtonPlay btPlay;
     private Game game;
 
+
+
     public MenuScreen(Game game) {
         this.game = game;
     }
@@ -43,6 +47,7 @@ public class MenuScreen extends BaseScreen {
         }
         btExit = new ButtonExit(atlas);
         btPlay = new ButtonPlay(atlas, game);
+
     }
 
     @Override
