@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.my.game.base.BaseScreen;
 import ru.my.game.math.Rect;
+import ru.my.game.pool.BulletPool;
 import ru.my.game.sprite.Background;
 import ru.my.game.sprite.Ship;
 import ru.my.game.sprite.Star;
@@ -21,6 +22,7 @@ public class GameScreen extends BaseScreen {
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
     private Ship ship;
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -32,13 +34,15 @@ public class GameScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT ; i++) {
             starArray[i] = new Star(atlas);
         }
-        ship = new Ship(atlas);
+        bulletPool = new BulletPool();
+        ship = new Ship(atlas, bulletPool);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        freeAllDestroyedActiveSprites();
         draw();
     }
 
@@ -56,12 +60,18 @@ public class GameScreen extends BaseScreen {
         super.dispose();
         backg.dispose();
         atlas.dispose();
+        bulletPool.despose();
+    }
+
+    private void freeAllDestroyedActiveSprites() {
+        bulletPool.freeAllDestroyedActiveSprites();
     }
 
     public void update(float delta) {
         for (Star star : starArray) {
             star.update(delta);
         }
+        bulletPool.updateActiveSprites(delta);
         ship.update(delta);
     }
 
@@ -73,6 +83,7 @@ public class GameScreen extends BaseScreen {
         for (Star star : starArray) {
             star.draw(batch);
         }
+        bulletPool.drowActiveSprites(batch);
         ship.draw(batch);
         batch.end();
     }
@@ -80,6 +91,24 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         ship.touchDown(touch, pointer, button);
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        ship.touchUp(touch, pointer, button);
+        return false;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        ship.keyDown(keycode);
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        ship.keyUp(keycode);
         return false;
     }
 }
