@@ -2,41 +2,38 @@ package ru.my.game.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-//import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.my.game.base.Sound;
-import ru.my.game.base.Sprite;
+import ru.my.game.base.BaseShip;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 
-public class Ship extends Sprite {
+public class Ship extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
 
-    private TextureRegion bulletRegion;
-    private Vector2 v = new Vector2();
-    private Vector2 v0 = new Vector2(0.3f, 0);
     private Vector2 bulletV = new Vector2(0, 0.5f);
-    private BulletPool bulletPool;
+
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
-    private Rect worldBounds;
+
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
     private float reloadInterval;
     private float reloadTimer;
-    private Sound bulletSound;
+    private Sound laserSound;
 
     public Ship(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         bulletRegion = atlas.findRegion("bulletMainShip");
+        laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         this.bulletPool = bulletPool;
-        reloadInterval = 2f;
-        bulletSound = new Sound();
-        //bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+        reloadInterval = 0.5f;
+        v = new Vector2();
+        v0 = new Vector2(0.3f, 0);
 
     }
 
@@ -147,7 +144,7 @@ public class Ship extends Sprite {
     }
 
     private void moveLeft() {
-        v.set(v0).rotate(180); //развернули ветора движения с права на лево
+        v.set(v0).rotate(180); //развернули вектор движения с права на лево
     }
 
     private void stop() {
@@ -156,8 +153,13 @@ public class Ship extends Sprite {
 
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletV, 0.03f, worldBounds, 1);
-        bulletSound.playBulletSound();
+        bullet.set(this, bulletRegion, pos, bulletV, 0.015f, worldBounds, 1);
+        laserSound.play();
+    }
+
+    public void dispose() {
+        laserSound.dispose();
+
     }
 
 
