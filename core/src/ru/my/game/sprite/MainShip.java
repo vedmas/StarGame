@@ -2,57 +2,47 @@ package ru.my.game.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.base.BaseShip;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 
-public class Ship extends BaseShip {
+public class MainShip extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
-
-    private Vector2 bulletV = new Vector2(0, 0.5f);
 
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
 
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
-    private float reloadInterval;
-    private float reloadTimer;
-    private Sound laserSound;
 
-    public Ship(TextureAtlas atlas, BulletPool bulletPool) {
+
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         bulletRegion = atlas.findRegion("bulletMainShip");
-        laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+        shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         this.bulletPool = bulletPool;
-        reloadInterval = 0.5f;
+        reloadInterval = 0.2f;
         v = new Vector2();
         v0 = new Vector2(0.3f, 0);
-
+        bulletV = new Vector2(0, 0.5f);
+        bulletHeight = 0.015f;
+        damage = 1;
+        hp = 10;
     }
 
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
-        this.worldBounds = worldBounds;
         setHeightProportion(0.2f);
         setBottom(worldBounds.getBottom() + 0.05f);
     }
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
-        reloadTimer += delta;
-        if(reloadTimer >= reloadInterval) {
-            reloadTimer = 0f;
-            shoot();
-        }
+        super.update(delta);
         if(getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft());
             stop();
@@ -90,12 +80,12 @@ public class Ship extends BaseShip {
             }
             else stop();
         } else
-            if(pointer == rightPointer) {
-                rightPointer = INVALID_POINTER;
-                if(leftPointer != INVALID_POINTER) {
-                    moveLeft();
-                } else stop();
-            }
+        if(pointer == rightPointer) {
+            rightPointer = INVALID_POINTER;
+            if(leftPointer != INVALID_POINTER) {
+                moveLeft();
+            } else stop();
+        }
         stop();
         return false;
     }
@@ -132,9 +122,6 @@ public class Ship extends BaseShip {
                 }
                 pressedRight = false;
                 break;
-            case Input.Keys.UP:
-                shoot();
-                break;
         }
         return false;
     }
@@ -150,17 +137,4 @@ public class Ship extends BaseShip {
     private void stop() {
         v.setZero();
     }
-
-    private void shoot() {
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, bulletRegion, pos, bulletV, 0.015f, worldBounds, 1);
-        laserSound.play();
-    }
-
-    public void dispose() {
-        laserSound.dispose();
-
-    }
-
-
 }

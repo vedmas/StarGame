@@ -16,7 +16,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
    protected SpriteBatch batch;
    private Rect screenBounds;
-   private Rect worldBounds;
+   protected Rect worldBounds;
    private  Rect glBounds;
 
    private Matrix4 worldToGl;
@@ -43,7 +43,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
-
     }
 
     @Override
@@ -52,7 +51,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         screenBounds.setSize(width, height);
         screenBounds.setLeft(0);
         screenBounds.setBottom(0);
-
         float aspect = width / (float) height;
         worldBounds.setWidth(1f * aspect);
         worldBounds.setHeight(1f);
@@ -69,20 +67,17 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public void pause() {
         System.out.println("pause");
-
     }
 
     @Override
     public void resume() {
         System.out.println("resume");
-
     }
 
     @Override
     public void hide() {
         System.out.println("hide");
         dispose();
-
     }
 
     @Override
@@ -153,7 +148,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-
         return false;
     }
 

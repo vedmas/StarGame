@@ -38,6 +38,16 @@ public abstract class SpritesPool<T extends Sprite> {
         }
     }
 
+    public void disposeAllSprites() {
+        for (T sprite : activeObjects) {
+            sprite.dispose();
+        }
+        for (T sprite : freeObjects) {
+            sprite.dispose();
+        }
+
+    }
+
     public void freeAllDestroyedActiveSprites() {
         for (int i = 0; i < activeObjects.size(); i++) {
             T sprite = activeObjects.get(i);
@@ -52,10 +62,12 @@ public abstract class SpritesPool<T extends Sprite> {
     }
 
     public ArrayList<T> getActiveObjects() {
+
         return activeObjects;
     }
 
     public void despose() {
+        disposeAllSprites();
         activeObjects.clear();
         freeObjects.clear();
     }

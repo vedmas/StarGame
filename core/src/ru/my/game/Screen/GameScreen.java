@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
+import ru.my.game.Utils.EnemyGenerator;
 import ru.my.game.base.BaseScreen;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
+import ru.my.game.pool.EnemyPool;
 import ru.my.game.sprite.Background;
-import ru.my.game.sprite.Ship;
+import ru.my.game.sprite.MainShip;
 import ru.my.game.sprite.Star;
 
 
@@ -21,8 +22,11 @@ public class GameScreen extends BaseScreen {
     private TextureAtlas atlas;
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
-    private Ship ship;
+    private MainShip ship;
     private BulletPool bulletPool;
+
+    private EnemyPool enemyPool;
+    private EnemyGenerator enemyGenerator;
 
     @Override
     public void show() {
@@ -35,7 +39,9 @@ public class GameScreen extends BaseScreen {
             starArray[i] = new Star(atlas);
         }
         bulletPool = new BulletPool();
-        ship = new Ship(atlas, bulletPool);
+        enemyPool = new EnemyPool(bulletPool, worldBounds);
+        enemyGenerator = new EnemyGenerator(enemyPool, atlas, worldBounds);
+        ship = new MainShip(atlas, bulletPool);
     }
 
     @Override
@@ -57,13 +63,15 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
-        super.dispose();
         backg.dispose();
         atlas.dispose();
         bulletPool.despose();
+        enemyPool.despose();
+        super.dispose();
     }
 
     private void freeAllDestroyedActiveSprites() {
+        enemyPool.freeAllDestroyedActiveSprites();
         bulletPool.freeAllDestroyedActiveSprites();
     }
 
@@ -72,6 +80,8 @@ public class GameScreen extends BaseScreen {
             star.update(delta);
         }
         bulletPool.updateActiveSprites(delta);
+        enemyPool.updateActiveSprites(delta);
+        enemyGenerator.generate(delta);
         ship.update(delta);
     }
 
@@ -84,6 +94,7 @@ public class GameScreen extends BaseScreen {
             star.draw(batch);
         }
         bulletPool.drowActiveSprites(batch);
+        enemyPool.drowActiveSprites(batch);
         ship.draw(batch);
         batch.end();
     }
