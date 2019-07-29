@@ -61,8 +61,8 @@ public abstract class SpritesPool<T extends Sprite> {
         }
     }
 
-    public ArrayList<T> getActiveObjects() {
 
+    public ArrayList<T> getActiveObjects() {
         return activeObjects;
     }
 

@@ -13,6 +13,7 @@ public class Enemy extends BaseShip {
     private State state;
     private Vector2 descentV = new Vector2(0f, -0.5f);
 
+
     public Enemy(BulletPool bulletPool, Rect worldBounds) {
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         this.bulletPool = bulletPool;
@@ -21,6 +22,7 @@ public class Enemy extends BaseShip {
         bulletV = new Vector2();
         this.worldBounds = worldBounds;
         state = State.DESCENT;
+
     }
 
     @Override
@@ -68,4 +70,6 @@ public class Enemy extends BaseShip {
         v.set(descentV);
         state = State.DESCENT;
     }
+
+
 }

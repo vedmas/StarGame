@@ -12,6 +12,8 @@ import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 import ru.my.game.pool.EnemyPool;
 import ru.my.game.sprite.Background;
+import ru.my.game.sprite.Bullet;
+import ru.my.game.sprite.Enemy;
 import ru.my.game.sprite.MainShip;
 import ru.my.game.sprite.Star;
 
@@ -48,6 +50,7 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        checkCollision();
         freeAllDestroyedActiveSprites();
         draw();
     }
@@ -70,11 +73,6 @@ public class GameScreen extends BaseScreen {
         super.dispose();
     }
 
-    private void freeAllDestroyedActiveSprites() {
-        enemyPool.freeAllDestroyedActiveSprites();
-        bulletPool.freeAllDestroyedActiveSprites();
-    }
-
     public void update(float delta) {
         for (Star star : starArray) {
             star.update(delta);
@@ -83,6 +81,32 @@ public class GameScreen extends BaseScreen {
         enemyPool.updateActiveSprites(delta);
         enemyGenerator.generate(delta);
         ship.update(delta);
+    }
+
+    // Проверка на пересечение вражеского корабля и корабля игрока
+    public void checkCollision() {
+        for (Enemy activeObject : enemyPool.getActiveObjects()) {
+            if (!activeObject.isOutside(ship)) {
+                activeObject.destroy();
+            }
+        }
+
+        // Проверка попадания пули во вражеский корабль
+        for (Bullet bullet : bulletPool.getActiveObjects()) {
+            for (Enemy enemy : enemyPool.getActiveObjects()) {
+                if(!bullet.isOutside(enemy)) {
+                    bullet.destroy();
+                    enemy.destroy();
+
+                }
+            }
+
+        }
+    }
+
+    private void freeAllDestroyedActiveSprites() {
+        enemyPool.freeAllDestroyedActiveSprites();
+        bulletPool.freeAllDestroyedActiveSprites();
     }
 
     public void draw() {
