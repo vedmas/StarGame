@@ -83,24 +83,27 @@ public class GameScreen extends BaseScreen {
         ship.update(delta);
     }
 
-    // Проверка на пересечение вражеского корабля и корабля игрока
+
     public void checkCollision() {
+        // Проверка на пересечение вражеского корабля и корабля игрока
         for (Enemy activeObject : enemyPool.getActiveObjects()) {
             if (!activeObject.isOutside(ship)) {
                 activeObject.destroy();
             }
         }
 
-        // Проверка попадания пули во вражеский корабль
+        // Проверка попадания пули во вражеский корабль, уничтожение корабля по завершению HP
         for (Bullet bullet : bulletPool.getActiveObjects()) {
             for (Enemy enemy : enemyPool.getActiveObjects()) {
-                if(!bullet.isOutside(enemy)) {
+                if(!bullet.isOutside(enemy) && (bullet.getOwner() instanceof MainShip)) {
                     bullet.destroy();
-                    enemy.destroy();
+                    enemy.setHp(enemy.getHp() - 1);
+                    if(enemy.getHp() < 1) {
+                        enemy.destroy();
+                    }
 
                 }
             }
-
         }
     }
 

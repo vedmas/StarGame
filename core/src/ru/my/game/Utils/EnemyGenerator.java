@@ -112,4 +112,6 @@ public class EnemyGenerator {
             enemy.setBottom(worldBounds.getTop());
         }
     }
+
+
 }
