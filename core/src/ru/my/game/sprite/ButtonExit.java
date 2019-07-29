@@ -2,9 +2,6 @@ package ru.my.game.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.base.ScaledTouchUpButton;
 import ru.my.game.math.Rect;
 

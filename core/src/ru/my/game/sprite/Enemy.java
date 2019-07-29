@@ -9,6 +9,10 @@ import ru.my.game.pool.BulletPool;
 
 public class Enemy extends BaseShip {
 
+    private enum State {DESCENT, FIGHT}
+    private State state;
+    private Vector2 descentV = new Vector2(0f, -0.5f);
+
     public Enemy(BulletPool bulletPool, Rect worldBounds) {
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         this.bulletPool = bulletPool;
@@ -16,13 +20,29 @@ public class Enemy extends BaseShip {
         v0 = new Vector2();
         bulletV = new Vector2();
         this.worldBounds = worldBounds;
+        state = State.DESCENT;
     }
 
     @Override
     public void update(float delta) {
-        super.update(delta);
-        if (getBottom() < worldBounds.getBottom()) {
-            destroy();
+        pos.mulAdd(v, delta);
+        switch (state) {
+            case DESCENT:
+                if(getTop() <= worldBounds.getTop()) {
+                    v.set(v0);
+                    state = State.FIGHT;
+                }
+                break;
+            case FIGHT:
+                reloadTimer += delta;
+                if(reloadTimer >= reloadInterval) {
+                    reloadTimer = 0f;
+                    shoot();
+                }
+                if (getBottom() < worldBounds.getBottom()) {
+                    destroy();
+                }
+                break;
         }
     }
 
@@ -45,6 +65,7 @@ public class Enemy extends BaseShip {
         setHeightProportion(height);
         this.hp = hp;
         reloadTimer = reloadInterval;
-        v.set(v0);
+        v.set(descentV);
+        state = State.DESCENT;
     }
 }

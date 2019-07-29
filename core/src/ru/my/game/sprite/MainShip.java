@@ -43,6 +43,12 @@ public class MainShip extends BaseShip {
     @Override
     public void update(float delta) {
         super.update(delta);
+        pos.mulAdd(v, delta);
+        reloadTimer += delta;
+        if(reloadTimer >= reloadInterval) {
+            reloadTimer = 0f;
+            shoot();
+        }
         if(getLeft() < worldBounds.getLeft()) {
             setLeft(worldBounds.getLeft());
             stop();

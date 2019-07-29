@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.math.MatrixUtils;
 import ru.my.game.math.Rect;
 
@@ -148,6 +147,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+
         return false;
     }
 
