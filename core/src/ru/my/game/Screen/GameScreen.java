@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.ArrayList;
+
 import ru.my.game.Utils.EnemyGenerator;
 import ru.my.game.base.BaseScreen;
 import ru.my.game.math.Rect;
@@ -29,6 +32,9 @@ public class GameScreen extends BaseScreen {
 
     private EnemyPool enemyPool;
     private EnemyGenerator enemyGenerator;
+    private enum State {PLAYING, PAUSE, GAME_OVER}
+    private State state;
+    private State stateBuffer;
 
     @Override
     public void show() {
@@ -44,6 +50,8 @@ public class GameScreen extends BaseScreen {
         enemyPool = new EnemyPool(bulletPool, worldBounds);
         enemyGenerator = new EnemyGenerator(enemyPool, atlas, worldBounds);
         ship = new MainShip(atlas, bulletPool);
+        state = State.PLAYING;
+        stateBuffer = State.PLAYING;
     }
 
     @Override
@@ -77,32 +85,58 @@ public class GameScreen extends BaseScreen {
         for (Star star : starArray) {
             star.update(delta);
         }
-        bulletPool.updateActiveSprites(delta);
-        enemyPool.updateActiveSprites(delta);
-        enemyGenerator.generate(delta);
-        ship.update(delta);
+        if(state == State.PLAYING) {
+            bulletPool.updateActiveSprites(delta);
+            enemyPool.updateActiveSprites(delta);
+            enemyGenerator.generate(delta);
+            ship.update(delta);
+        }
     }
 
 
     public void checkCollision() {
+        if(state != State.PLAYING) {
+            return;
+        }
         // Проверка на пересечение вражеского корабля и корабля игрока
-        for (Enemy activeObject : enemyPool.getActiveObjects()) {
-            if (!activeObject.isOutside(ship)) {
-                activeObject.destroy();
+        ArrayList<Enemy> enemyList = enemyPool.getActiveObjects();
+        ArrayList<Bullet> bulletList = bulletPool.getActiveObjects();
+        for (Enemy activeEnemy : enemyList) {
+            float distCollision = activeEnemy.getHalfHeight() + ship.getHalfHeight();
+            if (!activeEnemy.isDesttroyed()) {
+                if ((activeEnemy.pos.dst(ship.pos)) < distCollision) {
+                    activeEnemy.damage(ship.getHp());
+                    ship.damage(activeEnemy.getHp());
+                    if(ship.isDesttroyed()) {
+                        state = State.GAME_OVER;
+                    }
+                }
             }
         }
 
         // Проверка попадания пули во вражеский корабль, уничтожение корабля по завершению HP
-        for (Bullet bullet : bulletPool.getActiveObjects()) {
-            for (Enemy enemy : enemyPool.getActiveObjects()) {
-                if(!bullet.isOutside(enemy) && (bullet.getOwner() instanceof MainShip)) {
-                    bullet.destroy();
-                    enemy.setHp(enemy.getHp() - 1);
-                    if(enemy.getHp() < 1) {
-                        enemy.destroy();
+        for (Bullet bullet : bulletList) {
+            if (bullet.isDesttroyed()) {
+                continue;
+            }
+            if ((bullet.getOwner() != ship)) {
+                if (!bullet.isOutside(ship)) {
+                    ship.damage(bullet.getDamage());
+                    if(ship.isDesttroyed()) {
+                        state = State.GAME_OVER;
                     }
-
+                    bullet.destroy();
                 }
+            } else {
+                    for (Enemy activeEnemy : enemyList) {
+                        if(activeEnemy.isDesttroyed()) {
+                            continue;
+                        }
+                        if (!bullet.isOutside(activeEnemy)) {
+                            activeEnemy.damage(bullet.getDamage());
+                            bullet.destroy();
+                        }
+                    }
             }
         }
     }
@@ -120,33 +154,56 @@ public class GameScreen extends BaseScreen {
         for (Star star : starArray) {
             star.draw(batch);
         }
-        bulletPool.drowActiveSprites(batch);
-        enemyPool.drowActiveSprites(batch);
-        ship.draw(batch);
+        if(state == State.PLAYING) {
+            bulletPool.drowActiveSprites(batch);
+            enemyPool.drowActiveSprites(batch);
+            ship.draw(batch);
+        }
         batch.end();
     }
 
     @Override
+    public void pause() {
+        super.pause();
+        stateBuffer = state;
+        state = State.PAUSE;
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+        state = stateBuffer;
+    }
+
+    @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        ship.touchDown(touch, pointer, button);
+        if(state == State.PLAYING) {
+            ship.touchDown(touch, pointer, button);
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        ship.touchUp(touch, pointer, button);
+        if(state == State.PLAYING) {
+            ship.touchUp(touch, pointer, button);
+        }
         return false;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        ship.keyDown(keycode);
+        if(state == State.PLAYING) {
+            ship.keyDown(keycode);
+        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        ship.keyUp(keycode);
+        if(state == State.PLAYING) {
+            ship.keyUp(keycode);
+        }
         return false;
     }
 }

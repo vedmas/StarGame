@@ -28,6 +28,9 @@ public abstract class BaseShip extends Sprite {
 
     protected float bulletHeight;
 
+    private float damageAnimateInterval = 0.1f;
+    private float damageAnimateTimer = damageAnimateInterval;
+
     public BaseShip() {
     }
 
@@ -45,7 +48,7 @@ public abstract class BaseShip extends Sprite {
         shootSound.dispose();
     }
 
-    public void shoot() {
+    protected void shoot() {
             Bullet bullet = bulletPool.obtain();
             bullet.set(
                     this,
@@ -58,11 +61,32 @@ public abstract class BaseShip extends Sprite {
             shootSound.play();
     }
 
+    @Override
+    public void update(float delta) {
+        damageAnimateTimer += delta;
+        if(damageAnimateTimer >= damageAnimateInterval) {
+            frame = 0;
+        }
+    }
+
+    public void damage(int damage) {
+        frame = 1;
+        damageAnimateTimer = 0f;
+        hp -= damage;
+        if(hp <= 0) {
+            destroy();
+        }
+    }
+
     public int getHp() {
         return hp;
     }
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }
