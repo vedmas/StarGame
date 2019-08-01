@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public abstract class ScaledTouchUpButton extends Sprite {
     public static final float PRESS_SCALE = 0.9f;
-    private boolean pressed;
+    public boolean pressed;
     private int pointer;
 
     public ScaledTouchUpButton(TextureRegion region) {

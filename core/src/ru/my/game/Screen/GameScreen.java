@@ -40,11 +40,17 @@ public class GameScreen extends BaseScreen {
     private ExplosionPool explosionPool;
 
     private EnemyGenerator enemyGenerator;
-    private enum State {PLAYING, PAUSE, GAME_OVER}
+    public enum State {PLAYING, PAUSE, GAME_OVER}
     private State state;
     private State stateBuffer;
 
+    public void setState(State state) {
+        this.state = state;
+    }
 
+    public State getState() {
+        return state;
+    }
 
     @Override
     public void show() {
@@ -72,6 +78,9 @@ public class GameScreen extends BaseScreen {
         if(state == State.GAME_OVER) {
             enemyPool.allDestroyActiveObjects();
             bulletPool.allDestroyActiveObjects();
+            if(button_new_game.pressed) {
+                state = State.PLAYING;
+            }
         }
         super.render(delta);
         update(delta);
@@ -123,9 +132,9 @@ public class GameScreen extends BaseScreen {
 
 
     public void checkCollision() {
-        if(state != State.PLAYING) {
-            return;
-        }
+//        if(state != State.PLAYING) {
+//            return;
+//        }
         // Проверка на пересечение вражеского корабля и корабля игрока
         ArrayList<Enemy> enemyList = enemyPool.getActiveObjects();
         ArrayList<Bullet> bulletList = bulletPool.getActiveObjects();
@@ -212,6 +221,7 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         button_new_game.touchDown(touch, pointer, button);
+        System.out.println("button_new_game.pressed = " + button_new_game.pressed);
         if(state == State.PLAYING) {
             ship.touchDown(touch, pointer, button);
         }
@@ -221,6 +231,7 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         button_new_game.touchUp(touch, pointer, button);
+        System.out.println("button_new_game.pressed = " + button_new_game.pressed);
         if(state == State.PLAYING) {
             ship.touchUp(touch, pointer, button);
         }
