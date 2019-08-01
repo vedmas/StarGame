@@ -7,10 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import ru.my.game.base.BaseShip;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
+import ru.my.game.pool.ExplosionPool;
 
 public class MainShip extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
+    private final int primaryHP = 10;
 
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
@@ -19,18 +21,19 @@ public class MainShip extends BaseShip {
     private int rightPointer = INVALID_POINTER;
 
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         bulletRegion = atlas.findRegion("bulletMainShip");
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         reloadInterval = 0.2f;
         v = new Vector2();
         v0 = new Vector2(0.3f, 0);
         bulletV = new Vector2(0, 0.5f);
         bulletHeight = 0.015f;
         damage = 1;
-        hp = 10;
+        hp = primaryHP;
     }
 
     @Override
@@ -57,6 +60,15 @@ public class MainShip extends BaseShip {
             setRight(worldBounds.getRight());
             stop();
         }
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(
+                bullet.getLeft() > getRight()
+                || bullet.getRight() < getLeft()
+                || bullet.getTop() < getBottom()
+                || bullet.getBottom() > pos.y
+                );
     }
 
     @Override
@@ -142,5 +154,12 @@ public class MainShip extends BaseShip {
 
     private void stop() {
         v.setZero();
+    }
+
+    public void restore() {
+        hp = primaryHP;
+        flashDestroy();
+        pos.x = 0f;
+        setBottom(worldBounds.getBottom() + 0.05f);
     }
 }

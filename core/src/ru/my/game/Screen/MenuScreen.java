@@ -14,6 +14,7 @@ import ru.my.game.math.Rect;
 import ru.my.game.sprite.Background;
 import ru.my.game.sprite.ButtonExit;
 import ru.my.game.sprite.ButtonPlay;
+import ru.my.game.sprite.LogoShip;
 import ru.my.game.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
@@ -21,14 +22,13 @@ public class MenuScreen extends BaseScreen {
     private Texture backg;
     private Background background;
     private TextureAtlas atlas;
+    private TextureAtlas mainAtlas;
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
     private ButtonExit btExit;
     private ButtonPlay btPlay;
+    private LogoShip logoShip;
     private Game game;
-
-
-
 
     public MenuScreen(Game game) {
         this.game = game;
@@ -40,12 +40,14 @@ public class MenuScreen extends BaseScreen {
         backg = new Texture("textures/Backg.jpg");
         background = new Background(new TextureRegion(backg));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
+        mainAtlas = new TextureAtlas("textures/mainAtlas.tpack");
         starArray = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT ; i++) {
             starArray[i] = new Star(atlas);
         }
         btExit = new ButtonExit(atlas);
         btPlay = new ButtonPlay(atlas, game);
+        logoShip = new LogoShip(mainAtlas);
 
     }
 
@@ -57,6 +59,7 @@ public class MenuScreen extends BaseScreen {
         }
         btExit.resize(worldBounds);
         btPlay.resize(worldBounds);
+        logoShip.resize(worldBounds);
     }
 
     @Override
@@ -103,6 +106,7 @@ public class MenuScreen extends BaseScreen {
         }
         btExit.draw(batch);
         btPlay.draw(batch);
+        logoShip.draw(batch);
         batch.end();
     }
 }

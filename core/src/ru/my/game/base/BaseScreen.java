@@ -66,11 +66,13 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     @Override
     public void pause() {
         System.out.println("pause");
+        music.stop();
     }
 
     @Override
     public void resume() {
         System.out.println("resume");
+        music.play();
     }
 
     @Override
@@ -156,4 +158,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         System.out.println("scrolled amount = " + amount);
         return false;
     }
+
+
 }

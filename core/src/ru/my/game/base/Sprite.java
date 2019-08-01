@@ -1,6 +1,5 @@
 package ru.my.game.base;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -15,10 +14,7 @@ public abstract class Sprite extends Rect {
     protected int frame;
     private boolean desttroyed;
 
-
-
     public Sprite() {
-
     }
 
     public Sprite(TextureRegion region) {

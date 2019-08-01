@@ -30,6 +30,16 @@ public abstract class SpritesPool<T extends Sprite> {
         }
     }
 
+    public void allDestroyActiveObjects() {  // метод переносит все активные объекты в список свободных
+        for (int i = 0; i < activeObjects.size(); i++) {
+            T sprite = activeObjects.get(i);
+            if (activeObjects.remove(sprite)) {
+                freeObjects.add(sprite);
+                i--;
+            }
+        }
+    }
+
     public void drowActiveSprites(SpriteBatch batch) {
         for (T sprite : activeObjects) {
             if(!sprite.isDesttroyed()) {

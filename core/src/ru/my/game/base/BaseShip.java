@@ -1,17 +1,21 @@
 package ru.my.game.base;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
+import ru.my.game.pool.ExplosionPool;
 import ru.my.game.sprite.Bullet;
+import ru.my.game.sprite.Explosion;
 
 public abstract class BaseShip extends Sprite {
 
     protected TextureRegion bulletRegion;
     protected BulletPool bulletPool;
+    protected ExplosionPool explosionPool;
     protected Rect worldBounds;
 
     protected Vector2 v;
@@ -22,6 +26,7 @@ public abstract class BaseShip extends Sprite {
     protected float reloadTimer;
 
     protected Sound shootSound;
+    protected Sound boom;
 
     protected int damage;
     protected int hp;
@@ -43,10 +48,6 @@ public abstract class BaseShip extends Sprite {
         this.worldBounds = worldBounds;
     }
 
-    @Override
-    public void dispose() {
-        shootSound.dispose();
-    }
 
     protected void shoot() {
             Bullet bullet = bulletPool.obtain();
@@ -78,6 +79,13 @@ public abstract class BaseShip extends Sprite {
         }
     }
 
+    @Override
+    public void destroy() {
+        hp = 0;
+        boom();
+        super.destroy();
+    }
+
     public int getHp() {
         return hp;
     }
@@ -86,7 +94,20 @@ public abstract class BaseShip extends Sprite {
         this.hp = hp;
     }
 
-    public int getDamage() {
-        return damage;
+
+
+    private void boom() {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(getHeight(), pos);
+        boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
+        boom.play();
     }
+
+    @Override
+    public void dispose() {
+        shootSound.dispose();
+        boom.dispose();
+    }
+
+
 }
