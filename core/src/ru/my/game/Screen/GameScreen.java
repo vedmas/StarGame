@@ -1,6 +1,5 @@
 package ru.my.game.Screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -44,14 +43,6 @@ public class GameScreen extends BaseScreen {
     private State state;
     private State stateBuffer;
 
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public State getState() {
-        return state;
-    }
-
     @Override
     public void show() {
         super.show();
@@ -79,6 +70,7 @@ public class GameScreen extends BaseScreen {
             enemyPool.allDestroyActiveObjects();
             bulletPool.allDestroyActiveObjects();
             if(button_new_game.pressed) {
+                ship.restore();
                 state = State.PLAYING;
             }
         }

@@ -11,7 +11,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.my.game.base.BaseScreen;
 import ru.my.game.math.Rect;
+import ru.my.game.pool.BulletPool;
+import ru.my.game.pool.ExplosionPool;
 import ru.my.game.sprite.Background;
+import ru.my.game.sprite.Bullet;
 import ru.my.game.sprite.ButtonExit;
 import ru.my.game.sprite.ButtonPlay;
 import ru.my.game.sprite.LogoShip;
@@ -29,6 +32,8 @@ public class MenuScreen extends BaseScreen {
     private ButtonPlay btPlay;
     private LogoShip logoShip;
     private Game game;
+    private BulletPool bulletPool;
+    private ExplosionPool explosionPool;
 
     public MenuScreen(Game game) {
         this.game = game;
@@ -47,8 +52,7 @@ public class MenuScreen extends BaseScreen {
         }
         btExit = new ButtonExit(atlas);
         btPlay = new ButtonPlay(atlas, game);
-        logoShip = new LogoShip(mainAtlas);
-
+        logoShip = new LogoShip(mainAtlas, bulletPool, explosionPool);
     }
 
     @Override
