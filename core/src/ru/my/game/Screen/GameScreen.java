@@ -1,5 +1,6 @@
 package ru.my.game.Screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,7 +32,7 @@ public class GameScreen extends BaseScreen {
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
     private Game_Over game_over;
-    private Button_New_Game button_new_game;
+    private Button_New_Game button_New_Game;
     private MainShip ship;
 
     private BulletPool bulletPool;
@@ -42,6 +43,11 @@ public class GameScreen extends BaseScreen {
     public enum State {PLAYING, PAUSE, GAME_OVER}
     private State state;
     private State stateBuffer;
+     private Game game;
+
+    public GameScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -59,9 +65,10 @@ public class GameScreen extends BaseScreen {
         enemyGenerator = new EnemyGenerator(enemyPool, atlas, worldBounds);
         ship = new MainShip(atlas, bulletPool, explosionPool);
         game_over = new Game_Over(atlas);
-        button_new_game = new Button_New_Game(atlas);
+//        button_New_Game = new Button_New_Game(atlas, this);
         state = State.PLAYING;
         stateBuffer = State.PLAYING;
+        button_New_Game = new Button_New_Game(atlas, game);
     }
 
     @Override
@@ -69,10 +76,7 @@ public class GameScreen extends BaseScreen {
         if(state == State.GAME_OVER) {
             enemyPool.allDestroyActiveObjects();
             bulletPool.allDestroyActiveObjects();
-            if(button_new_game.pressed) {
-                ship.restore();
-                state = State.PLAYING;
-            }
+
         }
         super.render(delta);
         update(delta);
@@ -80,6 +84,11 @@ public class GameScreen extends BaseScreen {
         freeAllDestroyedActiveSprites();
         draw();
     }
+
+//    public void resetGame() {
+//        state = State.PLAYING;
+//        ship.restore();
+//    }
 
     @Override
     public void resize(Rect worldBounds) {
@@ -89,21 +98,18 @@ public class GameScreen extends BaseScreen {
         }
         ship.resize(worldBounds);
         game_over.resize(worldBounds);
-        button_new_game.resize(worldBounds);
+        button_New_Game.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
-        if (state != State.PAUSE) {
-            backg.dispose();
             atlas.dispose();
+            backg.dispose();
             bulletPool.despose();
             explosionPool.despose();
             enemyPool.despose();
-            game_over.dispose();
-            button_new_game.dispose();
+            ship.dispose();
             super.dispose();
-        }
     }
 
     public void update(float delta) {
@@ -122,11 +128,7 @@ public class GameScreen extends BaseScreen {
 
     }
 
-
     public void checkCollision() {
-//        if(state != State.PLAYING) {
-//            return;
-//        }
         // Проверка на пересечение вражеского корабля и корабля игрока
         ArrayList<Enemy> enemyList = enemyPool.getActiveObjects();
         ArrayList<Bullet> bulletList = bulletPool.getActiveObjects();
@@ -190,9 +192,9 @@ public class GameScreen extends BaseScreen {
             enemyPool.drowActiveSprites(batch);
             ship.draw(batch);
         }
-        if(state == State.GAME_OVER) {
+        if(state == State.GAME_OVER || state == State.PAUSE) {
             game_over.draw(batch);
-            button_new_game.draw(batch);
+            button_New_Game.draw(batch);
         }
         batch.end();
     }
@@ -212,8 +214,10 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        button_new_game.touchDown(touch, pointer, button);
-        System.out.println("button_new_game.pressed = " + button_new_game.pressed);
+        if(state == State.GAME_OVER) {
+            button_New_Game.touchDown(touch, pointer, button);
+        }
+        System.out.println("button_new_game.pressed = " + button_New_Game.pressed);
         if(state == State.PLAYING) {
             ship.touchDown(touch, pointer, button);
         }
@@ -222,8 +226,10 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        button_new_game.touchUp(touch, pointer, button);
-        System.out.println("button_new_game.pressed = " + button_new_game.pressed);
+        if(state == State.GAME_OVER) {
+            button_New_Game.touchUp(touch, pointer, button);
+        }
+
         if(state == State.PLAYING) {
             ship.touchUp(touch, pointer, button);
         }
