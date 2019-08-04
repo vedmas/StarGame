@@ -1,21 +1,17 @@
 package ru.my.game.sprite;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-
 import ru.my.game.Screen.GameScreen;
 import ru.my.game.base.ScaledTouchUpButton;
 import ru.my.game.math.Rect;
 
-public class Button_New_Game extends ScaledTouchUpButton {
+public class ButtonNewGame extends ScaledTouchUpButton {
 
-//    GameScreen gameScreen;
-        private Game game;
+    private GameScreen gameScreen;
 
-    public Button_New_Game(TextureAtlas atlas, Game game) {
+    public ButtonNewGame(TextureAtlas atlas, GameScreen gameScreen) {
         super(atlas.findRegion("button_new_game"));
-//        this.gameScreen = gameScreen;
-        this.game = game;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -26,7 +22,6 @@ public class Button_New_Game extends ScaledTouchUpButton {
 
     @Override
     public void action() {
-//        gameScreen.resetGame();
-        game.setScreen(new GameScreen(game));
+        gameScreen.resetGame();
     }
 }

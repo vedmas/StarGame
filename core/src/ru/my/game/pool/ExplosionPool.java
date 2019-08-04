@@ -2,7 +2,6 @@ package ru.my.game.pool;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
-import ru.my.game.base.Sprite;
 import ru.my.game.base.SpritesPool;
 import ru.my.game.sprite.Explosion;
 

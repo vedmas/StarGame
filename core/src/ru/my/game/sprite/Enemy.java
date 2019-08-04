@@ -14,8 +14,6 @@ public class Enemy extends BaseShip {
     private State state;
     private Vector2 descentV = new Vector2(0f, -0.5f);
 
-
-
     public Enemy(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds) {
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         this.bulletPool = bulletPool;

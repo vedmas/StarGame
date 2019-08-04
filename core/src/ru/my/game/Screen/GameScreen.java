@@ -8,31 +8,36 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
+import com.badlogic.gdx.utils.Align;
 import java.util.ArrayList;
-
 import ru.my.game.Utils.EnemyGenerator;
 import ru.my.game.base.BaseScreen;
+import ru.my.game.base.Font;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 import ru.my.game.pool.EnemyPool;
 import ru.my.game.pool.ExplosionPool;
 import ru.my.game.sprite.Background;
 import ru.my.game.sprite.Bullet;
-import ru.my.game.sprite.Button_New_Game;
+import ru.my.game.sprite.ButtonNewGame;
 import ru.my.game.sprite.Enemy;
-import ru.my.game.sprite.Game_Over;
+import ru.my.game.sprite.ButtonGameOver;
 import ru.my.game.sprite.MainShip;
 import ru.my.game.sprite.Star;
 
 public class GameScreen extends BaseScreen {
+
+    private static final String FRAGS = "Убито: ";
+    private static final String HP = "Жизни: ";
+    private static final String LEVEL = "Уровень: ";
+
     private Texture backg;
     private Background background;
     private TextureAtlas atlas;
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
-    private Game_Over game_over;
-    private Button_New_Game button_New_Game;
+    private ButtonGameOver game_over;
+    private ButtonNewGame button_New_Game;
     private MainShip ship;
 
     private BulletPool bulletPool;
@@ -40,10 +45,15 @@ public class GameScreen extends BaseScreen {
     private ExplosionPool explosionPool;
 
     private EnemyGenerator enemyGenerator;
-    public enum State {PLAYING, PAUSE, GAME_OVER}
+    private enum State {PLAYING, PAUSE, GAME_OVER}
     private State state;
     private State stateBuffer;
-     private Game game;
+    private Game game;
+    private Font font;
+    private StringBuilder sbFrags;
+    private StringBuilder sbHp;
+    private StringBuilder sbLevel;
+    private int frags;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -64,11 +74,15 @@ public class GameScreen extends BaseScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds);
         enemyGenerator = new EnemyGenerator(enemyPool, atlas, worldBounds);
         ship = new MainShip(atlas, bulletPool, explosionPool);
-        game_over = new Game_Over(atlas);
-//        button_New_Game = new Button_New_Game(atlas, this);
+        game_over = new ButtonGameOver(atlas);
+        button_New_Game = new ButtonNewGame(atlas, this);
         state = State.PLAYING;
         stateBuffer = State.PLAYING;
-        button_New_Game = new Button_New_Game(atlas, game);
+        font = new Font("Font/GameText.fnt", "Font/GameText.png");
+        font.setSize(0.022f);
+        sbFrags = new StringBuilder();
+        sbHp = new StringBuilder();
+        sbLevel = new StringBuilder();
     }
 
     @Override
@@ -85,10 +99,11 @@ public class GameScreen extends BaseScreen {
         draw();
     }
 
-//    public void resetGame() {
-//        state = State.PLAYING;
-//        ship.restore();
-//    }
+    public void resetGame() {
+        state = State.PLAYING;
+        frags = 0;
+        ship.restore();
+    }
 
     @Override
     public void resize(Rect worldBounds) {
@@ -109,6 +124,7 @@ public class GameScreen extends BaseScreen {
             explosionPool.despose();
             enemyPool.despose();
             ship.dispose();
+            font.dispose();
             super.dispose();
     }
 
@@ -122,7 +138,7 @@ public class GameScreen extends BaseScreen {
         if(state == State.PLAYING) {
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
-            enemyGenerator.generate(delta);
+            enemyGenerator.generate(delta, frags);
             ship.update(delta);
         }
 
@@ -166,6 +182,9 @@ public class GameScreen extends BaseScreen {
                         if (activeEnemy.isbulletCollision(bullet)) {
                             activeEnemy.damage(bullet.getDamage());
                             bullet.destroy();
+                            if(activeEnemy.isDesttroyed()) {
+                                frags++;
+                            }
                         }
                     }
             }
@@ -196,7 +215,17 @@ public class GameScreen extends BaseScreen {
             game_over.draw(batch);
             button_New_Game.draw(batch);
         }
+        printInfo();
         batch.end();
+    }
+
+    public void printInfo() {
+        sbFrags.setLength(0);
+        sbHp.setLength(0);
+        sbLevel.setLength(0);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft(), worldBounds.getTop() - 0.005f);
+        font.draw(batch, sbHp.append(HP).append(ship.getHp()), worldBounds.pos.x, worldBounds.getTop() - 0.005f, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyGenerator.getLevel()), worldBounds.getRight(), worldBounds.getTop()- 0.005f, Align.right);
     }
 
     @Override

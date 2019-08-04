@@ -3,9 +3,7 @@ package ru.my.game.sprite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.base.BaseShip;
-import ru.my.game.base.ScaledTouchUpButton;
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 import ru.my.game.pool.ExplosionPool;

@@ -2,7 +2,6 @@ package ru.my.game.sprite;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.base.Sprite;
 
 public class Explosion extends Sprite {

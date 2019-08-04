@@ -12,7 +12,7 @@ import ru.my.game.pool.ExplosionPool;
 public class MainShip extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
-    private final int primaryHP = 10;
+    private final int primaryHP = 100;
 
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
@@ -157,6 +157,10 @@ public class MainShip extends BaseShip {
     }
 
     public void restore() {
+        pressedLeft = false;
+        pressedRight = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
         hp = primaryHP;
         flashDestroy();
         pos.x = 0f;

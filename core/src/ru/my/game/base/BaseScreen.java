@@ -36,6 +36,7 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         screenToWorld = new Matrix3();
         touch = new Vector2();
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        music.setVolume(1f);
         music.setLooping(true);
         music.play();
     }
@@ -87,7 +88,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
         music.stop();
         music.dispose();
         batch.dispose();
-
     }
 
     @Override

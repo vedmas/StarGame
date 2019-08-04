@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import ru.my.game.math.Rect;
 import ru.my.game.pool.BulletPool;
 import ru.my.game.pool.ExplosionPool;
@@ -94,19 +93,17 @@ public abstract class BaseShip extends Sprite {
         this.hp = hp;
     }
 
-
-
     private void boom() {
         Explosion explosion = explosionPool.obtain();
         explosion.set(getHeight(), pos);
         boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
-        boom.play();
+        boom.play(3f);
     }
 
     @Override
     public void dispose() {
         shootSound.dispose();
-        boom.dispose();
+        //boom.dispose();
     }
 
 

@@ -1,7 +1,6 @@
 package ru.my.game.base;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
 import java.util.ArrayList;
 
 public abstract class SpritesPool<T extends Sprite> {
