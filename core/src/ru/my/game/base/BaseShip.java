@@ -97,7 +97,7 @@ public abstract class BaseShip extends Sprite {
         Explosion explosion = explosionPool.obtain();
         explosion.set(getHeight(), pos);
         boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
-        boom.play(3f);
+        boom.play();
     }
 
     @Override

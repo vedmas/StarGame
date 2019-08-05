@@ -11,7 +11,7 @@ public class ButtonGameOver extends Sprite {
     }
 
     public void resize(Rect worldBounds) {
-        setHeightProportion(0.09f);
+        setHeightProportion(0.08f);
         pos.set(0, 0);
     }
 }

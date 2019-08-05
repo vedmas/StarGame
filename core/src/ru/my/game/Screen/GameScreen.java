@@ -23,6 +23,7 @@ import ru.my.game.sprite.ButtonNewGame;
 import ru.my.game.sprite.Enemy;
 import ru.my.game.sprite.ButtonGameOver;
 import ru.my.game.sprite.MainShip;
+import ru.my.game.sprite.MedicalBox;
 import ru.my.game.sprite.Star;
 
 public class GameScreen extends BaseScreen {
@@ -30,15 +31,18 @@ public class GameScreen extends BaseScreen {
     private static final String FRAGS = "Убито: ";
     private static final String HP = "Жизни: ";
     private static final String LEVEL = "Уровень: ";
+    private static final int BONUSKILL = 2;
 
     private Texture backg;
     private Background background;
     private TextureAtlas atlas;
+    private TextureAtlas otherAtlas;
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
     private ButtonGameOver game_over;
     private ButtonNewGame button_New_Game;
     private MainShip ship;
+    private MedicalBox medicalBox;
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
@@ -54,6 +58,7 @@ public class GameScreen extends BaseScreen {
     private StringBuilder sbHp;
     private StringBuilder sbLevel;
     private int frags;
+    public int bonusFrags;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -65,6 +70,7 @@ public class GameScreen extends BaseScreen {
         backg = new Texture("textures/Backg.jpg");
         background = new Background(new TextureRegion(backg));
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        otherAtlas = new TextureAtlas("textures/OtherAtlas.tpack");
         starArray = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT ; i++) {
             starArray[i] = new Star(atlas);
@@ -76,6 +82,7 @@ public class GameScreen extends BaseScreen {
         ship = new MainShip(atlas, bulletPool, explosionPool);
         game_over = new ButtonGameOver(atlas);
         button_New_Game = new ButtonNewGame(atlas, this);
+        medicalBox = new MedicalBox(otherAtlas, ship, worldBounds);
         state = State.PLAYING;
         stateBuffer = State.PLAYING;
         font = new Font("Font/GameText.fnt", "Font/GameText.png");
@@ -90,7 +97,6 @@ public class GameScreen extends BaseScreen {
         if(state == State.GAME_OVER) {
             enemyPool.allDestroyActiveObjects();
             bulletPool.allDestroyActiveObjects();
-
         }
         super.render(delta);
         update(delta);
@@ -114,6 +120,7 @@ public class GameScreen extends BaseScreen {
         ship.resize(worldBounds);
         game_over.resize(worldBounds);
         button_New_Game.resize(worldBounds);
+        medicalBox.resize(worldBounds);
     }
 
     @Override
@@ -140,8 +147,16 @@ public class GameScreen extends BaseScreen {
             enemyPool.updateActiveSprites(delta);
             enemyGenerator.generate(delta, frags);
             ship.update(delta);
+            bonus();
         }
 
+    }
+
+    public void bonus() {
+        if(bonusFrags >= BONUSKILL) {
+            medicalBox.generationPosMedicalBox(worldBounds);
+            bonusFrags = 0;
+        }
     }
 
     public void checkCollision() {
@@ -157,6 +172,9 @@ public class GameScreen extends BaseScreen {
                     if(ship.isDesttroyed()) {
                         state = State.GAME_OVER;
                     }
+                }
+                if(activeEnemy.pos.dst(medicalBox.pos) < distCollision) {
+                    medicalBox.resize(worldBounds);
                 }
             }
         }
@@ -184,6 +202,7 @@ public class GameScreen extends BaseScreen {
                             bullet.destroy();
                             if(activeEnemy.isDesttroyed()) {
                                 frags++;
+                                bonusFrags++;
                             }
                         }
                     }
@@ -210,6 +229,7 @@ public class GameScreen extends BaseScreen {
             bulletPool.drowActiveSprites(batch);
             enemyPool.drowActiveSprites(batch);
             ship.draw(batch);
+            medicalBox.draw(batch);
         }
         if(state == State.GAME_OVER || state == State.PAUSE) {
             game_over.draw(batch);
@@ -246,9 +266,9 @@ public class GameScreen extends BaseScreen {
         if(state == State.GAME_OVER) {
             button_New_Game.touchDown(touch, pointer, button);
         }
-        System.out.println("button_new_game.pressed = " + button_New_Game.pressed);
         if(state == State.PLAYING) {
             ship.touchDown(touch, pointer, button);
+            medicalBox.touchDown(touch, pointer, button);
         }
         return false;
     }
@@ -261,6 +281,7 @@ public class GameScreen extends BaseScreen {
 
         if(state == State.PLAYING) {
             ship.touchUp(touch, pointer, button);
+            medicalBox.touchUp(touch, pointer, button);
         }
         return false;
     }

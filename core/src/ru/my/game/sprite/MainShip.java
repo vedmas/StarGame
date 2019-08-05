@@ -12,7 +12,7 @@ import ru.my.game.pool.ExplosionPool;
 public class MainShip extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
-    private final int primaryHP = 100;
+    private final int primaryHP = 10;
 
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
