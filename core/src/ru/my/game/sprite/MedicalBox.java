@@ -27,6 +27,18 @@ public class MedicalBox extends ScaledTouchUpButton {
         float posX = Rnd.nextFloat(worldBounds.getLeft(), worldBounds.getRight());
         float posY = Rnd.nextFloat(worldBounds.getTop(), worldBounds.getBottom());
         pos.set(posX, posY);
+        if(getRight() > worldBounds.getRight()) {
+            setRight(worldBounds.getRight());
+        }
+        if(getLeft() < worldBounds.getLeft()) {
+            setLeft(worldBounds.getLeft());
+        }
+        if(getTop() > worldBounds.getTop()) {
+            setTop(worldBounds.getTop());
+        }
+        if(getBottom() < worldBounds.getBottom()) {
+            setBottom(worldBounds.getBottom());
+        }
     }
 
     @Override

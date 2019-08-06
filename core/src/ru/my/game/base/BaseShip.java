@@ -9,6 +9,7 @@ import ru.my.game.pool.BulletPool;
 import ru.my.game.pool.ExplosionPool;
 import ru.my.game.sprite.Bullet;
 import ru.my.game.sprite.Explosion;
+import ru.my.game.sprite.MainShip;
 
 public abstract class BaseShip extends Sprite {
 
@@ -25,7 +26,6 @@ public abstract class BaseShip extends Sprite {
     protected float reloadTimer;
 
     protected Sound shootSound;
-    protected Sound boom;
 
     protected int damage;
     protected int hp;
@@ -34,6 +34,7 @@ public abstract class BaseShip extends Sprite {
 
     private float damageAnimateInterval = 0.1f;
     private float damageAnimateTimer = damageAnimateInterval;
+    MainShip ship;
 
     public BaseShip() {
     }
@@ -81,7 +82,6 @@ public abstract class BaseShip extends Sprite {
     @Override
     public void destroy() {
         hp = 0;
-        boom();
         super.destroy();
     }
 
@@ -93,17 +93,11 @@ public abstract class BaseShip extends Sprite {
         this.hp = hp;
     }
 
-    private void boom() {
-        Explosion explosion = explosionPool.obtain();
-        explosion.set(getHeight(), pos);
-        boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
-        boom.play();
-    }
+
 
     @Override
     public void dispose() {
         shootSound.dispose();
-        //boom.dispose();
     }
 
 

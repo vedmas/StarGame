@@ -2,6 +2,7 @@ package ru.my.game.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import ru.my.game.base.BaseShip;
@@ -12,19 +13,21 @@ import ru.my.game.pool.ExplosionPool;
 public class MainShip extends BaseShip {
 
     private static final int INVALID_POINTER = -1;
-    private final int primaryHP = 10;
+    private final int primaryHP = 100;
 
     private boolean pressedLeft = false;
     private boolean pressedRight = false;
 
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
+    private Sound boom;
 
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         bulletRegion = atlas.findRegion("bulletMainShip");
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+        boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         this.bulletPool = bulletPool;
         this.explosionPool = explosionPool;
         reloadInterval = 0.2f;
@@ -165,5 +168,22 @@ public class MainShip extends BaseShip {
         flashDestroy();
         pos.x = 0f;
         setBottom(worldBounds.getBottom() + 0.05f);
+    }
+
+    @Override
+    public void destroy() {
+        boom();
+        super.destroy();
+    }
+
+    public void boom() {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(getHeight(), pos);
+        boom.play();
+    }
+
+    @Override
+    public void dispose() {
+        boom.dispose();
     }
 }

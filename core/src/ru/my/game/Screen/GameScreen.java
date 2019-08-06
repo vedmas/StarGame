@@ -156,18 +156,6 @@ public class GameScreen extends BaseScreen {
     public void bonus() {
         if(bonusFrags >= BONUSKILL) {
             medicalBox.generationPosMedicalBox(worldBounds);
-            if(medicalBox.getRight() > worldBounds.getRight()) {
-                medicalBox.setRight(worldBounds.getRight());
-            }
-            if(medicalBox.getLeft() < worldBounds.getLeft()) {
-                medicalBox.setLeft(worldBounds.getLeft());
-            }
-            if(medicalBox.getTop() > worldBounds.getTop()) {
-                medicalBox.setTop(worldBounds.getTop());
-            }
-            if(medicalBox.getBottom() < worldBounds.getBottom()) {
-                medicalBox.setBottom(worldBounds.getBottom());
-            }
             bonusFrags = 0;
         }
     }

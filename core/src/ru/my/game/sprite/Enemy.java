@@ -1,6 +1,7 @@
 package ru.my.game.sprite;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import ru.my.game.base.BaseShip;
@@ -13,9 +14,11 @@ public class Enemy extends BaseShip {
     private enum State {DESCENT, FIGHT}
     private State state;
     private Vector2 descentV = new Vector2(0f, -0.5f);
+    private Sound boom;
 
     public Enemy(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds) {
         shootSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
+        boom = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         this.bulletPool = bulletPool;
         this.explosionPool = explosionPool;
         v = new Vector2();
@@ -42,7 +45,7 @@ public class Enemy extends BaseShip {
                     reloadTimer = 0f;
                     shoot();
                 }
-                if (getBottom() < worldBounds.getBottom()) {
+                if (getTop() < worldBounds.getBottom()) {
                     setBottom(worldBounds.getTop());
                 }
                 break;
@@ -79,5 +82,22 @@ public class Enemy extends BaseShip {
                 || bullet.getBottom() > getTop()
                 || bullet.getTop() < pos.y
                 );
+    }
+
+    @Override
+    public void destroy() {
+        boom();
+        super.destroy();
+    }
+
+    public void boom() {
+        Explosion explosion = explosionPool.obtain();
+        explosion.set(getHeight(), pos);
+        boom.play();
+    }
+
+    @Override
+    public void dispose() {
+        boom.dispose();
     }
 }
