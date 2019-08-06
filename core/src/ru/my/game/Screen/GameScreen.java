@@ -31,7 +31,7 @@ public class GameScreen extends BaseScreen {
     private static final String FRAGS = "Убито: ";
     private static final String HP = "Жизни: ";
     private static final String LEVEL = "Уровень: ";
-    private static final int BONUSKILL = 2;
+    private static final int BONUSKILL = 30;
 
     private Texture backg;
     private Background background;
@@ -58,7 +58,8 @@ public class GameScreen extends BaseScreen {
     private StringBuilder sbHp;
     private StringBuilder sbLevel;
     private int frags;
-    public int bonusFrags;
+    private int bonusFrags;
+    private float distCollisionMedicalBox;
 
     public GameScreen(Game game) {
         this.game = game;
@@ -155,6 +156,18 @@ public class GameScreen extends BaseScreen {
     public void bonus() {
         if(bonusFrags >= BONUSKILL) {
             medicalBox.generationPosMedicalBox(worldBounds);
+            if(medicalBox.getRight() > worldBounds.getRight()) {
+                medicalBox.setRight(worldBounds.getRight());
+            }
+            if(medicalBox.getLeft() < worldBounds.getLeft()) {
+                medicalBox.setLeft(worldBounds.getLeft());
+            }
+            if(medicalBox.getTop() > worldBounds.getTop()) {
+                medicalBox.setTop(worldBounds.getTop());
+            }
+            if(medicalBox.getBottom() < worldBounds.getBottom()) {
+                medicalBox.setBottom(worldBounds.getBottom());
+            }
             bonusFrags = 0;
         }
     }
@@ -165,6 +178,7 @@ public class GameScreen extends BaseScreen {
         ArrayList<Bullet> bulletList = bulletPool.getActiveObjects();
         for (Enemy activeEnemy : enemyList) {
             float distCollision = activeEnemy.getHalfHeight() + ship.getHalfHeight();
+            distCollisionMedicalBox = activeEnemy.getHalfHeight() + medicalBox.getHalfHeight();
             if (!activeEnemy.isDesttroyed()) {
                 if ((activeEnemy.pos.dst(ship.pos)) < distCollision) {
                     activeEnemy.damage(ship.getHp());
@@ -173,7 +187,7 @@ public class GameScreen extends BaseScreen {
                         state = State.GAME_OVER;
                     }
                 }
-                if(activeEnemy.pos.dst(medicalBox.pos) < distCollision) {
+                if(activeEnemy.pos.dst(medicalBox.pos) < distCollisionMedicalBox) {
                     medicalBox.resize(worldBounds);
                 }
             }
@@ -224,14 +238,16 @@ public class GameScreen extends BaseScreen {
         for (Star star : starArray) {
             star.draw(batch);
         }
+
         explosionPool.drowActiveSprites(batch);
         if(state == State.PLAYING || state == State.PAUSE && stateBuffer != State.GAME_OVER) {
+            medicalBox.draw(batch);
             bulletPool.drowActiveSprites(batch);
             enemyPool.drowActiveSprites(batch);
             ship.draw(batch);
-            medicalBox.draw(batch);
+
         }
-        if(state == State.GAME_OVER || state == State.PAUSE) {
+        if(state == State.GAME_OVER || state == State.PAUSE && stateBuffer == State.GAME_OVER) {
             game_over.draw(batch);
             button_New_Game.draw(batch);
         }

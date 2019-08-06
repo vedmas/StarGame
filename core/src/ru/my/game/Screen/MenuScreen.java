@@ -18,6 +18,7 @@ import ru.my.game.sprite.Bullet;
 import ru.my.game.sprite.ButtonExit;
 import ru.my.game.sprite.ButtonPlay;
 import ru.my.game.sprite.LogoShip;
+import ru.my.game.sprite.NameGame;
 import ru.my.game.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
@@ -26,6 +27,7 @@ public class MenuScreen extends BaseScreen {
     private Background background;
     private TextureAtlas atlas;
     private TextureAtlas mainAtlas;
+    private TextureAtlas otherAtlas;
     private Star[] starArray;
     private static final int STAR_COUNT = 64;
     private ButtonExit btExit;
@@ -34,6 +36,7 @@ public class MenuScreen extends BaseScreen {
     private Game game;
     private BulletPool bulletPool;
     private ExplosionPool explosionPool;
+    private NameGame nameGame;
 
     public MenuScreen(Game game) {
         this.game = game;
@@ -46,12 +49,14 @@ public class MenuScreen extends BaseScreen {
         background = new Background(new TextureRegion(backg));
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         mainAtlas = new TextureAtlas("textures/mainAtlas.tpack");
+        otherAtlas = new TextureAtlas("textures/OtherAtlas.tpack");
         starArray = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT ; i++) {
             starArray[i] = new Star(atlas);
         }
         btExit = new ButtonExit(atlas);
         btPlay = new ButtonPlay(atlas, game);
+        nameGame = new NameGame(otherAtlas);
         logoShip = new LogoShip(mainAtlas, bulletPool, explosionPool);
     }
 
@@ -64,6 +69,7 @@ public class MenuScreen extends BaseScreen {
         btExit.resize(worldBounds);
         btPlay.resize(worldBounds);
         logoShip.resize(worldBounds);
+        nameGame.resize(worldBounds);
     }
 
     @Override
@@ -78,6 +84,9 @@ public class MenuScreen extends BaseScreen {
         super.dispose();
         backg.dispose();
         atlas.dispose();
+        nameGame.dispose();
+        mainAtlas.dispose();
+        otherAtlas.dispose();
     }
 
     @Override
@@ -108,6 +117,7 @@ public class MenuScreen extends BaseScreen {
         for (Star star : starArray) {
             star.draw(batch);
         }
+        nameGame.draw(batch);
         btExit.draw(batch);
         btPlay.draw(batch);
         logoShip.draw(batch);

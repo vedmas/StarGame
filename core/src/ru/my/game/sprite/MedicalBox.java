@@ -11,14 +11,14 @@ public class MedicalBox extends ScaledTouchUpButton {
     Rect worldBounds;
 
     public MedicalBox(TextureAtlas atlas, MainShip ship, Rect worldBounds) {
-        super(atlas.findRegion("Tablet"));
+        super(atlas.findRegion("MedicalKit"));
         this.ship = ship;
         this.worldBounds = worldBounds;
     }
 
     @Override
     public void resize(Rect worldBounds) {
-        setHeightProportion(0.05f);
+        setHeightProportion(0.08f);
         setLeft(worldBounds.getRight());
 
     }

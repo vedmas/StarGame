@@ -26,7 +26,7 @@ public class LogoShip extends BaseShip {
 
     public void resize(Rect worldBounds) {
         setHeightProportion(0.20f);
-        pos.set(0, -0.1f);
+        pos.set(0, -0.25f);
     }
 
 }
