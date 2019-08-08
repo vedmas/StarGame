@@ -1,0 +1,20 @@
+
+OtherAtlas.png
+size: 1482,604
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+MedicalKit
+  rotate: false
+  xy: 1106, 224
+  size: 374, 378
+  orig: 374, 378
+  offset: 0, 0
+  index: -1
+X55
+  rotate: false
+  xy: 2, 2
+  size: 1102, 600
+  orig: 1102, 600
+  offset: 0, 0
+  index: -1
